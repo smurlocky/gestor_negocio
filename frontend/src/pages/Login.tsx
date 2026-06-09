@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Shield, Mail, Lock, ArrowRight, Loader2, AlertCircle, Eye, EyeOff, BarChart3, Layers, Zap } from 'lucide-react';
+import { Shield, Mail, Lock, ArrowRight, Loader2, AlertCircle, Eye, EyeOff, BarChart3, Layers, Zap, Database, CheckCircle2 } from 'lucide-react';
+import { api } from '../services/api';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -13,6 +14,8 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [seedSuccess, setSeedSuccess] = useState<string | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
@@ -47,6 +50,20 @@ export const Login: React.FC = () => {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSeedDb = async () => {
+    setIsSeeding(true);
+    setError(null);
+    setSeedSuccess(null);
+    try {
+      const res = await api.post('/system/seed');
+      setSeedSuccess(res.data.message || 'Banco populado com sucesso!');
+    } catch (err: any) {
+      setError('Erro ao popular banco de dados: ' + (err.response?.data?.detail || err.message));
+    } finally {
+      setIsSeeding(false);
     }
   };
 
@@ -225,6 +242,61 @@ export const Login: React.FC = () => {
               Criar conta gratuita
             </Link>
           </p>
+
+          {/* SEED DATABASE SECTION */}
+          <div className="mt-8 p-6 bg-purple-500/5 border border-purple-500/10 rounded-[24px]">
+            <h3 className="text-sm font-bold text-purple-400 mb-2">Ambiente de Testes</h3>
+            <p className="text-xs text-slate-400 mb-4">
+              Clique no botão abaixo para popular o banco de dados com dados de uma empresa fictícia.
+            </p>
+            
+            {seedSuccess && (
+              <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-2 text-emerald-400 text-xs">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{seedSuccess}</span>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleSeedDb}
+              disabled={isSeeding}
+              className="w-full py-2.5 mb-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+            >
+              {isSeeding ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Populando Banco...</span>
+                </>
+              ) : (
+                <>
+                  <Database className="w-4 h-4" />
+                  <span>Popular Banco de Dados</span>
+                </>
+              )}
+            </button>
+
+            <div className="space-y-2 text-[11px]">
+              <div className="p-2 bg-[#0c1225] border border-white/5 rounded-lg flex justify-between items-center cursor-pointer hover:border-purple-500/30 transition-colors"
+                onClick={() => { setEmail('joao@saborescia.com'); setPassword('admin123'); }}
+              >
+                <div>
+                  <p className="text-white font-semibold">joao@saborescia.com</p>
+                  <p className="text-slate-500">Gerente (Acesso Total)</p>
+                </div>
+                <span className="text-slate-400 font-mono">admin123</span>
+              </div>
+              <div className="p-2 bg-[#0c1225] border border-white/5 rounded-lg flex justify-between items-center cursor-pointer hover:border-purple-500/30 transition-colors"
+                onClick={() => { setEmail('maria@saborescia.com'); setPassword('operador123'); }}
+              >
+                <div>
+                  <p className="text-white font-semibold">maria@saborescia.com</p>
+                  <p className="text-slate-500">Operadora (PDV)</p>
+                </div>
+                <span className="text-slate-400 font-mono">operador123</span>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
