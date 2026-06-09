@@ -8,3 +8,4 @@ aiosqlite>=0.19.0
 asyncpg>=0.28.0
 passlib[bcrypt]
 python-jose[cryptography]
+python-multipart>=0.0.9
