@@ -27,4 +27,5 @@ async def seed_database():
     except Exception as e:
         error_details = traceback.format_exc()
         print(f"Unexpected error seeding DB:\n{error_details}")
-        raise HTTPException(status_code=500, detail=str(e))
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=400, content={"detail": f"Erro interno: {str(e)}", "traceback": error_details})
