@@ -1,0 +1,24 @@
+{
+  // Desativa o validador CSS nativo do VS Code (não entende @tailwind / @apply)
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+
+  // Ativa o Tailwind CSS IntelliSense para entender as diretivas corretamente
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+
+  // Associa arquivos .css ao modo CSS com suporte a Tailwind
+  "files.associations": {
+    "*.css": "css"
+  },
+
+  // Tailwind IntelliSense: reconhece as diretivas @tailwind, @apply, @layer, @screen
+  "tailwindCSS.validate": true,
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  }
+}
